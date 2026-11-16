@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 
+
 type CalendarDay = {
   day: number;
   title: string;
@@ -10,7 +11,11 @@ type CalendarDay = {
   intro: string;
   activity: string;
   icon: string;
+
+  riddle?: string;
+  answer?: string;
 };
+
 
 type Calendar = {
   id: string;
@@ -23,7 +28,7 @@ type AdventCalendarProps = {
   calendar: Calendar;
 };
 
-const CURRENT_DAY = 20;
+const CURRENT_DAY = 24;
 
 export default function AdventCalendar({
   calendar,
@@ -175,7 +180,7 @@ export default function AdventCalendar({
                         {openedContent && (
                             <div className="mt-7 rounded-2xl bg-stone-100 p-6">
                             <p className="text-sm font-bold uppercase tracking-[0.2em] text-stone-500">
-                                ✨ Dnešní speciál
+                                ✨ Dnešní malá radost
                             </p>
 
                             <p className="mt-3 text-lg leading-8 text-stone-800">
@@ -187,6 +192,33 @@ export default function AdventCalendar({
                     </div>
               
                 </div>
+
+{openedContent?.riddle && (
+  <div className="mt-6 rounded-2xl border border-amber-200 bg-[#fffaf0] p-6">
+
+    <h3 className="text-lg font-bold text-[#6B4A32]">
+      ❄️ Hádanka
+    </h3>
+
+    <p className="mt-3 text-lg leading-8 text-stone-800">
+      {openedContent.riddle}
+    </p>
+
+    <details className="mt-5">
+      <summary className="cursor-pointer rounded-xl bg-[#6B4A32] px-5 py-3 text-center font-medium text-white hover:bg-[#543824]">
+        Odhalit odpověď
+      </summary>
+
+      <div className="mt-4 rounded-xl bg-white p-4 text-center">
+        <p className="text-xl font-semibold text-[#6B4A32]">
+          {openedContent.answer}
+        </p>
+      </div>
+    </details>
+
+  </div>
+)}
+
 
                 <div className="mt-10 flex items-center justify-between gap-3">
 
