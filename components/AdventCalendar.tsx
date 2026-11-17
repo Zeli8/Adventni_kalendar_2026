@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import {useEffect, useState } from "react";
 import Image from "next/image";
+
+const BASE_PATH = "/Adventni_kalendar_2026";
 
 
 type CalendarDay = {
@@ -28,11 +30,61 @@ type AdventCalendarProps = {
   calendar: Calendar;
 };
 
-const CURRENT_DAY = 24;
+
+
+function getCurrentDay() {
+  const today = new Date();
+
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Europe/Prague",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(today);
+
+  const day = Number(
+    parts.find((part) => part.type === "day")?.value
+  );
+
+  const month = Number(
+    parts.find((part) => part.type === "month")?.value
+  );
+
+  const year = Number(
+    parts.find((part) => part.type === "year")?.value
+  );
+
+  // LISTOPADOVÝ TESTOVACÍ REŽIM
+  if (year === 2026 && month === 12) {
+    return Math.min(day, 24);
+  }
+
+  if (year < 2026 || (year === 2026 && month < 11)) {
+    return 0;
+  }
+
+  return 24;
+}
+
 
 export default function AdventCalendar({
   calendar,
 }: AdventCalendarProps) {
+
+const [CURRENT_DAY, setCurrentDay] = useState(0);
+
+useEffect(() => {
+  // Kontrola při otevření aplikace
+  setCurrentDay(getCurrentDay());
+
+  // Kontrola každých 10 sekund
+  const interval = setInterval(() => {
+    setCurrentDay(getCurrentDay());
+  }, 10000);
+
+  return () => clearInterval(interval);
+}, []);
+
   const days = Array.from({ length: 24 }, (_, index) => index + 1);
 
   const [openedDay, setOpenedDay] = useState<number | null>(null);
@@ -62,7 +114,7 @@ export default function AdventCalendar({
 
   return (
     <main className="min-h-screen bg-stone-100 bg-cover bg-top bg-no-repeat px-6 py-12"style={{
-        backgroundImage: "url('/images/backgrounds/christmas.png')",
+        backgroundImage: `url('${BASE_PATH}/images/backgrounds/christmas.png')`,
         }}
     >
       <div className="mx-auto max-w-5xl">
@@ -76,9 +128,6 @@ export default function AdventCalendar({
             {calendar.description}
           </p>
 
-          <p className="mt-2 text-sm text-stone-400">
-            Testovací datum: {CURRENT_DAY}. prosince
-          </p>
         </header>
 
         <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6">
@@ -114,7 +163,7 @@ export default function AdventCalendar({
                     {!isLocked && dayContent?.icon && (
                         <div className="relative mt-2 h-10 w-10 sm:h-12 sm:w-12">
                         <Image
-                            src={dayContent.icon}
+                            src={`${BASE_PATH}${dayContent.icon}`}
                             alt=""
                             fill
                             className="object-contain"
@@ -161,7 +210,7 @@ export default function AdventCalendar({
                     {openedContent && (
                             <div className="relative mt-6 aspect-[16/9] w-full overflow-hidden rounded-2xl bg-stone-200">
                                 <Image
-                                src={openedContent.image}
+                                src={`${BASE_PATH}${openedContent.image}`}
                                 alt={openedContent.title}
                                 fill
                                 className="object-cover"
