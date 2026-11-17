@@ -85,6 +85,48 @@ useEffect(() => {
   return () => clearInterval(interval);
 }, []);
 
+
+useEffect(() => {
+  if (CURRENT_DAY === 0) return;
+
+  let cancelled = false;
+
+  const imagesToPreload = calendar.days
+    .filter((item) => item.day <= CURRENT_DAY)
+    .sort(
+      (a, b) =>
+        Math.abs(a.day - CURRENT_DAY) -
+        Math.abs(b.day - CURRENT_DAY)
+    );
+
+  let index = 0;
+
+  function preloadNext() {
+    if (cancelled || index >= imagesToPreload.length) {
+      return;
+    }
+
+    const day = imagesToPreload[index];
+    index++;
+
+    const img = new window.Image();
+
+    img.onload = preloadNext;
+    img.onerror = preloadNext;
+
+    img.src =
+      `/Adventni_kalendar_2026${day.image}`;
+  }
+
+  // Nejdřív necháme načíst samotný kalendář
+  const timeout = window.setTimeout(preloadNext, 1000);
+
+  return () => {
+    cancelled = true;
+    window.clearTimeout(timeout);
+  };
+}, [calendar, CURRENT_DAY]);
+
   const days = Array.from({ length: 24 }, (_, index) => index + 1);
 
   const [openedDay, setOpenedDay] = useState<number | null>(null);
@@ -168,6 +210,7 @@ useEffect(() => {
                             fill
                             className="object-contain"
                             sizes="48px"
+                            loading={day <= 6 ? "eager" : "lazy"}
                         />
                         </div>
                     )}
