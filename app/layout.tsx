@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Adventní kalendář 🎄",
+  title: "Adventní kalendář",
   description:
     "24 malých radostí pro kouzelné čekání na Vánoce.",
 };
