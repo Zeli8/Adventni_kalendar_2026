@@ -3,7 +3,7 @@ name: Deploy Adventni kalendar
 
 on:
   push:
-    branches: [main]
+    branches: [master]
   workflow_dispatch:
 
 permissions:
