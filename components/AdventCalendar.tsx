@@ -59,7 +59,7 @@ function getCurrentDay() {
     return Math.min(day, 24);
   }
 
-  if (year < 2026 || (year === 2026 && month < 11)) {
+  if (year < 2026 || (year === 2026 && month < 12)) {
     return 0;
   }
 
